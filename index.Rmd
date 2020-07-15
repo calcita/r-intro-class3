@@ -63,6 +63,35 @@ listado <- read_csv("data/listings.csv") #importo los datos
 ```
 
 
+# ¿Qué haremos hoy?
+
+- Repaso del segundo taller 
+<br><br>
+--
+
+- Encadenar funciones: operador %>%
+<br><br>
+--
+
+- Crear una variable a partir de ciertas condiciones: case_when()
+<br><br>
+--
+
+- Recodificar y renombrar variables
+<br><br>
+--
+
+- Exportar objetos a archivos Rdata. Importar archivos Rdata.
+<br><br>
+--
+
+- Unir dos data frame 
+<br><br>
+--
+
+- Buenas prácticas a la hora de escribir código
+
+---
 class: inverse, center, middle
 # %>%
 
