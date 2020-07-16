@@ -546,6 +546,17 @@ listado_reviews %>% count(duplicated(id))
 ```
 
 ---
+# Ejercicio (8')
+
+- Cargar el archivo listado_complete.Rdata
+
+- Averiguar por cuál(es) variable(s) se puede unir con el objeto listado.
+
+- Hacer un join entre listado y listado_complete agregando solamente del segundo data frame las variables: id, city, square_feet, review_scores_rating. 
+
+- Guardar el nuevo objeto listado en el Rdata original. 
+
+---
 # Sintaxis
   
 Buenas prácticas...
