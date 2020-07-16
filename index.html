@@ -24,31 +24,30 @@ class: center, middle, inverse, title-slide
 
 
 
-
 # ¿Qué haremos hoy?
 
 - Repaso del segundo taller 
-&lt;br&gt;&lt;br&gt;
+&lt;br&gt;
 --
 
 - Encadenar funciones: operador %&gt;%
-&lt;br&gt;&lt;br&gt;
+&lt;br&gt;
 --
 
 - Crear una variable a partir de ciertas condiciones: case_when()
-&lt;br&gt;&lt;br&gt;
+&lt;br&gt;
 --
 
 - Recodificar y renombrar variables
-&lt;br&gt;&lt;br&gt;
+&lt;br&gt;
 --
 
 - Exportar objetos a archivos Rdata. Importar archivos Rdata.
-&lt;br&gt;&lt;br&gt;
+&lt;br&gt;
 --
 
 - Unir dos data frame 
-&lt;br&gt;&lt;br&gt;
+&lt;br&gt;
 --
 
 - Buenas prácticas a la hora de escribir código
@@ -138,27 +137,25 @@ cebar(colocar_bombilla(hinchar(poner_yerba(mate))))
 * summarise(promedio_gr = mean(price))
 ```
 
-
-
 ---
 # Ejercicio (6')
 
 Rehacer los ejercicios anteriores usando el pipe
 
-- Selecciona los casos que tienen entre de 10 y 20 evaluaciones y guarda en un objeto llamado review_10_20.
+- Selecciona los casos que tienen entre de 10 y 20 evaluaciones y guarda en un objeto llamado `review_10_20`.
 
-- Selecciona los casos que tienen solo 3 ó 5 días de disponibilidad y guarda en un objeto llamado availability_3_5.
+- Selecciona los casos que tienen solo 3 ó 5 días de disponibilidad y guarda en un objeto llamado `availability_3_5`.
 
-- Selecciona los últimos 5 casos de listado y guarda en un objeto llamado last_5.
+- Selecciona los últimos 5 casos de listado y guarda en un objeto llamado `last_5`.
 
-- Selecciona las variables referidas a reviews y guarda en un objeto llamado reviews_name.
+- Selecciona las variables referidas a reviews y guarda en un objeto llamado `reviews_name`.
 
-- ¿Cuál es el alojamiento con mayor número de evaluaciones? Ver ?slice_max
+- ¿Cuál es el alojamiento con mayor número de evaluaciones? Ver `?slice_max`
 
 ---
 # Ejercicio (6')
 
-- Calcula la variable precio en dólares estadounidenses y llamala price_uss. Toma la cotización 1 euro - 1.13 dólares. Calcula la variable precio en pesos uruguayo y llamala price_pesos. Toma la cotización 1 euro - 49 pesos.
+- Calcula la variable precio en dólares estadounidenses y llamala `price_uss`. Toma la cotización 1 euro - 1.13 dólares. Calcula la variable precio en pesos uruguayo y llamala `price_pesos`. Toma la cotización 1 euro - 49 pesos.
 
 - ¿Cuál es el máximo y mínimo de evaluaciones que ha recibido un alojamiento?
 
@@ -196,10 +193,60 @@ listado %&gt;% count(disponible)
 # Ejercicio (5')
 
 
-- Crear la variable `price_range` con las siguientes categorias: bajo, medio-bajo, medio, medio y alto.
+- Crear la variable `price_range` con las siguientes categorias: "bajo", "medio-bajo", "medio", "medio-alto" y "alto".
 
-- Traducir las categorías de `room_type` y en una nueva variable llamada `room_tpye_sp`
+- Traducir las categorías de `room_type` y en una nueva variable llamada `room_tpye_sp`.
 
+
+---
+class: inverse, center, middle
+# dplyr::ungroup()
+
+
+---
+# Calculo una variable a nivel de grupos
+
+- La función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;ungroup()&lt;/span&gt; sirve para desagrupar un data frame agrupado. 
+--
+
+- Usarla me permite que la información de los grupos no quede guardada en el objeto (si realización una asignación al resultado), lo cual conllevaría a que todos los demás cálculos se hagan sobre esos grupos.
+--
+
+- No es necesario indicarle ningún argumento. 
+
+
+```r
+listado &lt;- listado %&gt;%
+* group_by(room_type) %&gt;%
+  mutate(promedio = mean(price)) %&gt;%
+* ungroup()
+```
+--
+
+Podemos confirmar que la nueva variable promedio toma un valor para cada uno de las categorías de `room_type`.
+
+
+```r
+listado %&gt;% count(room_type, promedio)
+```
+
+---
+# Calculo una variable a nivel de grupos
+
+- Además, la función  &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;ungroup()&lt;/span&gt;  me permite encadenar dos agrupaciones diferentes y realizar un cálculo para cada una, como en el ejemplo que sigue. 
+
+
+```r
+listado &lt;- listado %&gt;%
+* group_by(room_type) %&gt;%
+  mutate(promedio = mean(price)) %&gt;%
+* ungroup() %&gt;%
+* group_by(neighbourhood_group) %&gt;%
+  mutate(maximo = mean(price)) %&gt;%
+* ungroup()
+```
+
+Debo recordar de desagrupar si no quiero que el objeto listado guarde la información de la agrupación.
 
 ---
 class: inverse, center, middle
@@ -211,7 +258,7 @@ class: inverse, center, middle
 - La función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;recode()&lt;/span&gt; permite recodificar una variable. 
 --
 
-- recode(&lt;df&gt;, &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;variable&amp;gt;&lt;/span&gt;, &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;categoria_actual&amp;gt;&lt;/span&gt; = &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;categoria_nueva&amp;gt;&lt;/span&gt;)
+- recode(&lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;df&amp;gt;&lt;/span&gt;, &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;variable&amp;gt;&lt;/span&gt;, &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;categoria_actual&amp;gt;&lt;/span&gt; = &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;&amp;lt;categoria_nueva&amp;gt;&lt;/span&gt;)
 --
  
  - Recodifico la variable `room_type`, pasando sus categorías a español.
@@ -259,14 +306,6 @@ listado &lt;- listado %&gt;%
 *        lon = longitude)
 ```
 
-&lt;!-- --- --&gt;
-&lt;!-- # Mayúsculas y minúsculas --&gt;
-
-&lt;!-- The select_all() function allows changes to all columns, and takes a function as an argument. --&gt;
-
-&lt;!-- To get all column names in uppercase, you can use toupper(), similarly you could use tolower(). --&gt;
-
-
 ---
 class: inverse, center, middle
 # %&lt;&gt;%
@@ -274,7 +313,7 @@ class: inverse, center, middle
 ---
 # Pipe de asignación
 
-Para no repetirar todas las veces
+Para no repetir el nombre del data frame todas las veces
 
 
 ```r
@@ -346,7 +385,7 @@ class: inverse, middle, center
 ---
 # join (merge) data frames
 
-- Las funciones *_join() de dplyr permiten &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;unir dos data frame&lt;/span&gt;. Para ejemplificar llamaremos al primero `x`, al segundo `y`.
+- Las funciones &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;*_join()&lt;/span&gt; de `dplyr` permiten &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;unir dos data frame&lt;/span&gt;. Para ejemplificar llamaremos al primero `x`, al segundo `y`.
 &lt;br&gt;&lt;br&gt;
 --
 
@@ -364,17 +403,14 @@ class: inverse, middle, center
 
 - Una simplificación de cómo operan cada una de estas funciones las veremos mediante gif creados en este tutorial de tidyexplain](https://www.garrickadenbuie.com/project/tidyexplain/).
 
-&lt;!-- https://stat545.com/join-cheatsheet.html --&gt;
-&lt;!-- https://dplyr.tidyverse.org/reference/join.html#join-types --&gt;
-&lt;!-- https://statistical-programming.com/r-dplyr-join-inner-left-right-full-semi-anti --&gt;
 ---
 # dplyr::left_join
 
 .pull-left[
 
-- Mantiene todos los casos x
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;Mantiene todos los casos y variables de x.&lt;/span&gt; 
 
-- Agrega las variables de y, para los casos de x que no están en y, esas nuevas variables tendrán un dato faltante.
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;Agrega las variables de y&lt;/span&gt;, para los casos de x que no están en y, esas nuevas variables tendrán un dato faltante.
 
 - Si una fila de x matchea con múltiples filas de y, la fila de x se repetirá tantas veces como filas de y. 
 
@@ -390,10 +426,10 @@ class: inverse, middle, center
 # dplyr::right_join
 
 .pull-left[
-- Se queda con todas las variables de y.
 
-- Se queda con las variables de ambos data frame.
+- Se queda con todos los casos y las variables de `y`.
 
+- El `right_join(x, y)` es lo mismo que el `left_join(y, x)`
 ]
 .pull-right[
 
@@ -403,11 +439,9 @@ class: inverse, middle, center
 # full_join
 
 .pull-left[
-- Se queda con todos los casos de `x` y todos los casos de `y`.
+- Se queda con todos los casos de `x` y todos los casos `y`.
 
-
-- Se queda con todas las variables de `x` y todas las de `y`.
-
+- Se queda con todos las variables de `x` y todas las de `y`.
 ]
 
 .pull-right[
@@ -418,7 +452,7 @@ class: inverse, middle, center
 # inner_join()
 
 .pull-left[
-- Se queda solo con los casos comunes entre x e y.
+- Se queda solo con los casos comunes entre `x` e `y`.
 
 
 - Se queda con las variables de ambas bases.
@@ -444,14 +478,14 @@ class: inverse, middle, center
 # dplyr::anti_join
 
 
-- Se queda con los casos de x que no están en y.
+- Se queda con los casos de `x` que no están en `y`.
 
 ![](img/anti-join.gif)
 
 ---
 # Ejemplo *_join()
 
-- Cargo los archivos listings.csv y reviews.Rdata.
+- Cargo los archivos "listings.csv" y "reviews.Rdata".
 --
 
 
@@ -461,7 +495,7 @@ listado &lt;- read_csv("data/listings.csv")
 load("data/reviews.Rdata") # es un Rdata no debo asignarle nombre de objeto, ya lo tiene.
 ```
 
-- Exploro para encontrar cual es la variable identificatoria en cada data frame.
+- Exploro para encontrar cuál es la variable identificatoria en cada data frame.
 --
 
 .pull-left[
@@ -498,51 +532,24 @@ reviews %&gt;% select(1:2) %&gt;% slice(1:3)
 ---
 # Ejemplo *_join()
 
-- La variable id de listado identifica al alojamiento y la variable listing_id es la que identifica el alojamiento en el objeto reviews. La variable id de reviews identifica a la evaluación.
+- La variable "id" de `listado` identifica al alojamiento y la variable "listing_id" es la que identifica el alojamiento en el objeto `reviews`. La variable "id" de `reviews` identifica a la evaluación.
 --
+
 
 ```r
 listado %&gt;% count(duplicated(id))
-```
-
-```
-# A tibble: 1 x 2
-  `duplicated(id)`     n
-  &lt;lgl&gt;            &lt;int&gt;
-1 FALSE            20708
-```
-
-```r
 reviews %&gt;% count(duplicated(id))
-```
-
-```
-# A tibble: 2 x 2
-  `duplicated(id)`      n
-  &lt;lgl&gt;             &lt;int&gt;
-1 FALSE            748890
-2 TRUE                157
-```
-
-```r
 reviews %&gt;% count(duplicated(listing_id))
 ```
 
-```
-# A tibble: 2 x 2
-  `duplicated(listing_id)`      n
-  &lt;lgl&gt;                     &lt;int&gt;
-1 FALSE                     16042
-2 TRUE                     733005
-```
 --
-- ¿Si quiero quedarme con todos los casos de x y agregarle las variables que están en y, qué join debo hacer?
+- ¿Si quiero quedarme con todos los casos de `listado` (x) y agregarle las variables que están en `reviews` (y), qué join debo hacer?
 - ¿Qué dimensiones espero que tenga el nuevo data frame?
 
 ---
 # Ejemplo *_join()
 
-- ¿Todos los casos de listado están en reviews y viceversa?
+- ¿Todos los casos de `listado` están en `reviews` y viceversa?
 
 
 ```r
@@ -586,7 +593,7 @@ listado_reviews %&gt;% tally()
 1 753713
 ```
 --
-Chequeo casos duplicados en listado_reviews en la variable id.
+Chequeo casos duplicados en `listado_reviews` en la variable "id".
 
 
 ```r
@@ -600,17 +607,16 @@ listado_reviews %&gt;% count(duplicated(id))
 1 FALSE             20708
 2 TRUE             733005
 ```
-
 ---
 # Ejercicio (8')
 
-- Cargar el archivo listado_complete.Rdata
+- Cargar el archivo "listado_complete.Rdata"
 
-- Averiguar por cuál(es) variable(s) se puede unir con el objeto listado.
+- Averiguar por cuál(es) variable(s) se puede unir con el objeto `listado`.
 
-- Hacer un join entre listado y listado_complete agregando solamente del segundo data frame las variables: id, city, square_feet, review_scores_rating. 
+- Hacer un join entre `listado` y `listado_complete` agregando solamente del segundo data frame las variables: id, city, square_feet, review_scores_rating. 
 
-- Guardar el nuevo objeto listado en el Rdata original. 
+- Guardar el nuevo objeto `listado` en el Rdata original. 
 
 ---
 # Sintaxis
@@ -672,95 +678,6 @@ x&lt;-10
 --
       
 - Prestá atención a los **mensajes** de error y advertencia.
-
-
-
-
-
-&lt;!--     _if: permite elegir variables que satisfagan algunos criterios lógicos como is.numeric() o is.character() (por ejemplo, resumiendo sólo las columnas numéricas) --&gt;
-
-&lt;!--   _at:  permite realizar una operación sólo en variables especificadas por nombre (por ejemplo, mutando sólo las columnas cuyo nombre termina en "_fecha") --&gt;
-
-&lt;!--  _all:   permite realizar una operación en todas las variables a la vez (por ejemplo, calcular el número de valores que faltan en cada columna) --&gt;
-
-
-&lt;!-- The instructions for summarizing have to be a function. When there is no function available in base R or a package to do what you want, you can either make a function upfront, or make a function on the fly. --&gt;
-
-&lt;!-- The sample code will add 5 to the mean of each column. The function on the fly can be made by either using funs(mean(., na.rm = TRUE) + 5), or via a tilde: ~mean(., na.rm = TRUE) + 5. --&gt;
-
-
-&lt;!-- The function summarise_if() requires two arguments: --&gt;
-
-&lt;!--     First it needs information about the columns you want it to consider. This information needs to be a function that returns a boolean value. The easiest cases are functions like is.numeric, is.integer, is.double, is.logical, is.factor, lubridate::is.POSIXt or lubridate::is.Date. --&gt;
-
-&lt;!--     Secondly, it needs information about how to summarise that data, which needs to be a function. If not a function, you can create a function on the fly using funs() or a tilde (see above). --&gt;
-
-&lt;!-- av_survey_sample %&gt;% select_if(is.numeric) --&gt;
-
-&lt;!-- av_survey_sample %&gt;%  --&gt;
-&lt;!--   # select columns with at least one NA --&gt;
-&lt;!--   # the expression evaluates to TRUE if there is one or more missing values --&gt;
-&lt;!--   select_if(~sum(is.na(.x)) &gt; 0)  --&gt;
-  
-&lt;!-- --- --&gt;
-
-
-&lt;!-- We could rename columns that satisfy a logical expression using rename_if(). For instance, we can add a num_ prefix to all numeric column names. --&gt;
-
-&lt;!-- av_survey_sample %&gt;% --&gt;
-&lt;!--   # only rename numeric columns by adding a "num_" prefix --&gt;
-&lt;!--   rename_if(is.numeric, ~paste0("num_", .x)) --&gt;
-
-&lt;!-- av_survey_sample %&gt;%  --&gt;
-&lt;!--   # only mutate columns with at least one NA --&gt;
-&lt;!--   # replace each NA value with the character "missing" --&gt;
-&lt;!--   mutate_if(~sum(is.na(.x)) &gt; 0, --&gt;
-&lt;!--             ~if_else(is.na(.x), "missing", as.character(.x))) --&gt;
-
-&lt;!-- variables specified by name --&gt;
-
-&lt;!-- _at allows you to perform an operation only on variables specified by name. --&gt;
-
-&lt;!-- To specify which variables you want to operate on, you need to include the variable names inside the vars() function as the first argument. I think of as like vars() like c() to provide multiple values (in this case variable names) as a single argument. For example av_survey_sample %&gt;% mutate_at(vars(start_date, end_date), mdy_hms) will only mutate the start_date and end_date variables by converting them to lubridate format using the mdy_hms function. --&gt;
-
-&lt;!-- These variables can be specified explicitly by name within the vars() function, or using the select_helpers within the vars() function. --&gt;
-&lt;!-- Select helpers --&gt;
-
-&lt;!-- Select helpers are functions that you can use within select() to help specify which variables you want to select. The options are --&gt;
-
-&lt;!--     starts_with(): select all variables that start with a specified character string --&gt;
-
-&lt;!--     ends_with(): select all variables that end with a specified character string --&gt;
-
-&lt;!--     contains(): select all variables that contain a specified character string --&gt;
-
-&lt;!--     matches(): select variables that match a specified character string --&gt;
-
-&lt;!--     one_of(): selects variables that match any entries in the specified character vector --&gt;
-
-&lt;!--     num_range(): selects variables that are numbered (e.g. columns named V1, V2, V3 would be selected by select(num_range("V", 1:3))) --&gt;
-
-&lt;!-- # provide one_of with a vector of character variables --&gt;
-&lt;!-- variables &lt;- c("start_date", "end_date") --&gt;
-&lt;!-- av_survey_sample %&gt;% select(one_of(variables)) --&gt;
-
-&lt;!-- av_survey_sample %&gt;%  --&gt;
-&lt;!--   mutate(start_date = mdy_hms(start_date), --&gt;
-&lt;!--          end_date = mdy_hms(end_date)) --&gt;
-
-&lt;!-- # specifying specific variables to apply the same function to --&gt;
-&lt;!-- av_survey_sample %&gt;%  --&gt;
-&lt;!--   mutate_at(vars(start_date, end_date), mdy_hms) --&gt;
-  
-&lt;!-- # ungroup --&gt;
-
-
-&lt;!-- --- --&gt;
-&lt;!-- # tally  --&gt;
-
-&lt;!-- f you’re only interested in counting the total number of cases for a dataframe, you could use tally(), which behaves simarly to nrow(). --&gt;
-
-&lt;!-- You can’t provide a variable to count with tally(), it only works to count the overall number of observations. In fact, as is described in the dplyr documentation, count() is a short-hand for group_by() and tally() --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
